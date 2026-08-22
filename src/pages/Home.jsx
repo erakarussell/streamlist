@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaCheck,
   FaEdit,
@@ -9,9 +9,16 @@ import {
 
 function Home() {
   const [movie, setMovie] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState(() => {
+  const savedMovies = localStorage.getItem("streamListMovies");
+  return savedMovies ? JSON.parse(savedMovies) : [];
+});
   const [editingIndex, setEditingIndex] = useState(null);
   const [editText, setEditText] = useState("");
+
+  useEffect(() => {
+  localStorage.setItem("streamListMovies", JSON.stringify(movies));
+}, [movies]);
 
   const handleAdd = () => {
     if (movie.trim() !== "") {
