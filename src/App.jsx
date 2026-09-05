@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Movies from "./pages/Movies";
@@ -11,8 +11,12 @@ import "./App.css";
 
 function App() {
   const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
@@ -20,7 +24,7 @@ function App() {
   }, [cart]);
 
   const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
+    (total, item) => total + (Number(item?.quantity) || 0),
     0
   );
 
@@ -31,7 +35,7 @@ function App() {
           <li>
             <Link to="/">Home</Link>
           </li>
-          
+
           <li>
             <Link to="/movies">Movies</Link>
           </li>
@@ -66,6 +70,7 @@ function App() {
         />
 
         <Route path="/about" element={<About />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
